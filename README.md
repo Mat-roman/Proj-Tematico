@@ -8,7 +8,7 @@ Projeto desenvolvido para a disciplina **Projeto Temático II** (UCS) pelo Grupo
 
 **Integrantes:**
 - Mateus
-- Nathália (front-end)
+- Nathália
 - Guilherme
 - Saymon
 
