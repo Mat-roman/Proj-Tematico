@@ -19,16 +19,16 @@ Projeto desenvolvido para a disciplina **Projeto Temático II** (UCS) pelo Grupo
 - **Node.js (sidecar)** — lógica de negócio e orquestração da IA
 - **LangChain** — orquestração dos prompts enviados à IA
 - **API Gemini** — geração da decomposição da tarefa em micro-passos
-- **SQLite** (via `better-sqlite3`) — persistência de tarefas, micro-passos e preferências
+- **SQLite** — persistência de tarefas, micro-passos e preferências
 
 ## Arquitetura
 
 Organizada em MVC: o Tauri (Rust) atua como Controller nativo, repassando as chamadas a um processo sidecar em Node.js, onde ficam concentradas as regras de negócio (Model/Service), a comunicação com a IA e o acesso ao banco de dados.
 
 ```
-Usuário → View (React/Vue) → Controller (Tauri/Rust) → Model/Service (sidecar Node + LangChain) → API Gemini
-                                                                    ↓
-                                                                 SQLite
+
+<img width="2720" height="2272" alt="fluxo_decompor_tarefa_tauri" src="https://github.com/user-attachments/assets/1af8e5ef-db78-4a58-9e2f-fd9174e8f916" />
+
 ```
 
 ## Pré-requisitos
