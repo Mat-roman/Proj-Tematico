@@ -25,11 +25,6 @@ Projeto desenvolvido para a disciplina **Projeto Temático II** (UCS) pelo Grupo
 
 Organizada em MVC: o Tauri (Rust) atua como Controller nativo, repassando as chamadas a um processo sidecar em Node.js, onde ficam concentradas as regras de negócio (Model/Service), a comunicação com a IA e o acesso ao banco de dados.
 
-```
-
-<img width="2720" height="2272" alt="fluxo_decompor_tarefa_tauri" src="https://github.com/user-attachments/assets/1af8e5ef-db78-4a58-9e2f-fd9174e8f916" />
-
-```
 
 ## Pré-requisitos
 
