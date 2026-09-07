@@ -26,7 +26,16 @@ Projeto desenvolvido para a disciplina **Projeto Temático II** (UCS) pelo Grupo
 
 ## Arquitetura
 
-Organizada em MVC: o Tauri (Rust) atua como Controller nativo, repassando as chamadas a um processo sidecar em Node.js, onde ficam concentradas as regras de negócio (Model/Service), a comunicação com a IA e o acesso ao banco de dados.
+O projeto segue **MVC**, e cada camada mora em uma pasta própria:
+
+```
+VIEW              CONTROLLER              MODEL
+src/      ──────►  src-tauri/    ──────►  sidecar/  ──────►  SQLite
+(React/Vue)        (Rust/Tauri)           (Node.js)          Gemini
+```
+
+A View nunca fala com o banco nem com a IA direto — tudo passa pelo Controller.
+Detalhe de cada pasta em [Estrutura do projeto](#estrutura-do-projeto).
 
 ---
 
@@ -195,17 +204,31 @@ O instalador/executável gerado fica em `src-tauri/target/release/bundle/`.
 ## Estrutura do projeto
 
 ```
-├── src/                  # Interface (React/Vue) — View
-├── src-tauri/            # Núcleo Tauri em Rust — Controller
+Proj-Tematico/
+│
+├── src/                    ◄── VIEW
+│   ├── components/             Componentes de interface (React/Vue)
+│   └── pages/                  Telas do app
+│
+├── src-tauri/              ◄── CONTROLLER
+│   ├── src/                    Núcleo Rust: recebe as ações da View,
+│   │                           repassa ao sidecar e devolve a resposta
+│   └── tauri.conf.json         Configuração da janela e permissões
+│
+├── sidecar/                ◄── MODEL
 │   ├── src/
-│   └── tauri.conf.json
-├── sidecar/              # Processo Node.js — Model/Service
-│   ├── src/
-│   │   ├── services/     # Orquestração da IA (LangChain)
-│   │   └── db/           # Acesso ao SQLite
+│   │   ├── models/             Entidades (Tarefa, MicroPasso, Preferência)
+│   │   ├── services/           Regras de negócio + IA (LangChain/Gemini)
+│   │   └── db/                 Acesso ao SQLite
+│   ├── .env                    Sua GEMINI_API_KEY (não versionado)
 │   └── package.json
-└── README.md
+│
+└── docs/                       Documento de arquitetura MVC completo
 ```
+
+> As pastas `src/` e `src-tauri/` mantêm esses nomes porque são exigidos pelas
+> ferramentas (Vite e CLI do Tauri) — renomear quebra o build. A camada MVC de
+> cada uma está marcada acima.
 
 ## Funcionalidades principais
 
