@@ -1,0 +1,133 @@
+:root {
+  --fundo: #f7f7f5;
+  --superficie: #ffffff;
+  --borda: #c9c7c1;
+  --texto: #1c1b19;
+  --texto-suave: #6b6862;
+  --acento: #3b6ea5;
+  --erro: #a8362c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #17171a;
+    --superficie: #202024;
+    --borda: #4a4a53;
+    --texto: #f0efec;
+    --texto-suave: #a2a09a;
+    --acento: #7aa7d9;
+    --erro: #f0938a;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: system-ui, sans-serif;
+  font-size: 16px;
+}
+
+.login,
+.home {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+}
+
+.login-cartao {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 32px;
+  text-align: left;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+}
+
+.login-titulo {
+  margin: 0;
+  font-size: 22px;
+}
+
+.login-subtitulo {
+  margin: 0;
+  font-size: 14px;
+  color: var(--texto-suave);
+}
+
+.login-erro {
+  margin: 0;
+  padding: 10px;
+  font-size: 14px;
+  color: var(--erro);
+  border: 1px solid var(--erro);
+  border-radius: 8px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.campo-input {
+  padding: 10px;
+  font: inherit;
+  font-size: 16px;
+  color: inherit;
+  background: var(--fundo);
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+}
+
+.campo-input:focus {
+  outline: 2px solid var(--acento);
+}
+
+.campo-dica {
+  color: var(--texto-suave);
+}
+
+.botao {
+  padding: 12px;
+  font: inherit;
+  color: #ffffff;
+  background: var(--acento);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.botao:disabled {
+  opacity: 0.6;
+}
+
+.login-alternar {
+  margin: 0;
+  font-size: 14px;
+  text-align: center;
+  color: var(--texto-suave);
+}
+
+.login-link {
+  font: inherit;
+  color: var(--acento);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}

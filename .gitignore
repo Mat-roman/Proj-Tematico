@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+*.log
+
+# Rust / Tauri
+src-tauri/target/
+
+# Banco local
+sidecar/data/

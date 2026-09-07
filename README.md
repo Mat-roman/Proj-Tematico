@@ -43,41 +43,44 @@ Nomes de branch: `feat/` para funcionalidade nova, `fix/` para correção, `docs
 
 ## Arquitetura
 
-O projeto segue **MVC**, e cada camada mora em uma pasta própria:
+O projeto segue **MVC**. O Tauri fica de fora das camadas: ele só empacota o app
+e abre a janela — nada de regra de negócio é escrito em Rust.
 
 ```
-VIEW              CONTROLLER              MODEL
-src/      ──────►  src-tauri/    ──────►  sidecar/  ──────►  SQLite
-(React/Vue)        (Rust/Tauri)           (Node.js)          Gemini
+        VIEW                    CONTROLLER            MODEL
+   src/ (React)  ── HTTP ──►  sidecar/server.js  ──►  services/ + models/ + db/
+                                  (rotas)                  │
+                                                           ▼
+                                                    SQLite · Gemini
 ```
 
-A View nunca fala com o banco nem com a IA direto — tudo passa pelo Controller.
+A View nunca fala com o banco nem com a IA direto — tudo passa pelas rotas do sidecar.
 
 ```
 Proj-Tematico/
 │
 ├── src/                    ◄── VIEW
-│   ├── components/             Componentes de interface (React/Vue)
-│   └── pages/                  Telas do app
+│   ├── components/             Componentes de interface (React)
+│   ├── pages/                  Telas do app
+│   └── services/api.js         Único ponto que chama o sidecar
 │
-├── src-tauri/              ◄── CONTROLLER
-│   ├── src/                    Núcleo Rust: recebe as ações da View,
-│   │                           repassa ao sidecar e devolve a resposta
-│   └── tauri.conf.json         Configuração da janela e permissões
-│
-├── sidecar/                ◄── MODEL
+├── sidecar/                ◄── CONTROLLER + MODEL
 │   ├── src/
-│   │   ├── models/             Entidades (Tarefa, MicroPasso, Preferência)
+│   │   ├── server.js           Controller: recebe a chamada e delega
+│   │   ├── models/             Entidades (Usuario, Tarefa, MicroPasso)
 │   │   ├── services/           Regras de negócio + IA (LangChain/Gemini)
 │   │   └── db/                 Acesso ao SQLite
 │   └── package.json
+│
+├── src-tauri/                  Núcleo nativo: janela e empacotamento.
+│   ├── src/                    Boilerplate do Tauri — não escrevemos Rust aqui.
+│   └── tauri.conf.json         Configuração da janela e do build
 │
 └── docs/                       Documento de arquitetura MVC completo
 ```
 
 > As pastas `src/` e `src-tauri/` mantêm esses nomes porque são exigidos pelas
-> ferramentas (Vite e CLI do Tauri) — renomear quebra o build. A camada MVC de
-> cada uma está marcada acima.
+> ferramentas (Vite e CLI do Tauri) — renomear quebra o build.
 
 ## Rodando
 
