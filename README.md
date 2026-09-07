@@ -2,6 +2,9 @@
 
 Aplicativo desktop que ajuda pessoas com sobrecarga cognitiva a quebrar tarefas complexas em micro-passos, usando IA para gerar a decomposição.
 
+> **Branch `ambiente`** — esta branch cuida da preparação do ambiente de desenvolvimento.
+> Se você acabou de entrar no projeto, siga o passo a passo de [Configuração do ambiente](#configuração-do-ambiente) antes de qualquer outra coisa.
+
 ## Sobre o projeto
 
 Projeto desenvolvido para a disciplina **Projeto Temático II** (UCS) pelo Grupo 9.
@@ -25,20 +28,120 @@ Projeto desenvolvido para a disciplina **Projeto Temático II** (UCS) pelo Grupo
 
 Organizada em MVC: o Tauri (Rust) atua como Controller nativo, repassando as chamadas a um processo sidecar em Node.js, onde ficam concentradas as regras de negócio (Model/Service), a comunicação com a IA e o acesso ao banco de dados.
 
+---
 
-## Pré-requisitos
+# Configuração do ambiente
 
-- [Node.js](https://nodejs.org/) 18+
-- [Rust](https://www.rust-lang.org/tools/install) (via rustup)
-- [Tauri CLI](https://tauri.app/start/prerequisites/) e as dependências de sistema do seu SO (WebView2 no Windows, WebKitGTK no Linux, etc.)
-- Uma chave de API do [Google AI Studio (Gemini)](https://aistudio.google.com/)
+> **Status atual:** o código do app ainda não foi criado — o repositório tem apenas este README.
+> Ou seja, `npm install` e `npm run tauri dev` **ainda não funcionam**. O objetivo agora é deixar
+> a máquina de cada um pronta para quando o scaffold for criado.
 
-## Instalação
+## O que instalar
+
+Precisamos de **quatro** coisas: Node.js, Rust, o compilador C/C++ do sistema e uma chave da API Gemini.
+
+### 1. Node.js 18 ou superior
+
+Executa a interface (Vite/React) e o sidecar.
+
+**Windows**
+```bash
+winget install --id OpenJS.NodeJS.LTS -e
+```
+
+**macOS**
+```bash
+brew install node
+```
+
+**Linux (Debian/Ubuntu)**
+```bash
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - && sudo apt install -y nodejs
+```
+
+### 2. Rust (via rustup)
+
+O núcleo do Tauri é escrito em Rust. Instale **sempre pelo rustup**, nunca por pacote da distro.
+
+**Windows**
+```bash
+winget install --id Rustlang.Rustup -e
+```
+
+**macOS / Linux**
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+> Feche e reabra o terminal depois de instalar, senão o `cargo` não aparece no PATH.
+
+### 3. Dependências de sistema (compilador C/C++)
+
+O Rust precisa de um linker nativo, e o Tauri precisa da engine de WebView do SO.
+
+**Windows** — Microsoft C++ Build Tools:
+```bash
+winget install --id Microsoft.VisualStudio.2022.BuildTools -e
+```
+No instalador que abrir, marque a carga de trabalho **"Desktop development with C++"** e conclua.
+O **WebView2** já vem instalado no Windows 10/11 — nada a fazer.
+
+**macOS** — ferramentas de linha de comando do Xcode:
+```bash
+xcode-select --install
+```
+
+**Linux (Debian/Ubuntu)** — WebKitGTK e afins:
+```bash
+sudo apt update && sudo apt install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+```
+
+### 4. Chave da API Gemini
+
+Cada integrante gera a **sua própria** chave em https://aistudio.google.com/ (é gratuita).
+Ela vai no arquivo `sidecar/.env`, descrito em [Variáveis de ambiente](#variáveis-de-ambiente).
+
+**Nunca commite sua chave.** O `.env` deve estar no `.gitignore`.
+
+## Verificando a instalação
+
+Rode os quatro comandos abaixo. Todos precisam responder com uma versão:
+
+```bash
+node -v
+npm -v
+rustc --version
+cargo --version
+```
+
+Saída esperada (as versões podem ser mais novas):
+
+```
+v18.0.0 ou superior
+9.0.0 ou superior
+rustc 1.7x.x
+cargo 1.7x.x
+```
+
+Se `rustc` ou `cargo` derem "command not found", reabra o terminal. Se persistir, o rustup não
+entrou no PATH — reinstale pelo passo 2.
+
+## Editor recomendado
+
+VS Code, com as extensões:
+
+- **rust-analyzer** (`rust-lang.rust-analyzer`) — autocomplete e erros do Rust
+- **Tauri** (`tauri-apps.tauri-vscode`) — suporte ao `tauri.conf.json`
+- **ESLint** e **Prettier** — padronização do código do front-end e do sidecar
+
+## Instalação do projeto
+
+> Válido a partir do momento em que o scaffold do Tauri existir no repositório.
 
 ```bash
 # Clonar o repositório
 git clone <url-do-repositorio>
-cd organizador-de-tarefas
+cd Proj-Tematico
 
 # Instalar dependências do front-end
 npm install
@@ -49,9 +152,9 @@ npm install
 cd ..
 ```
 
-## Configuração
+## Variáveis de ambiente
 
-Crie um arquivo `.env` dentro de `sidecar/` com sua chave da API:
+Crie um arquivo `.env` dentro de `sidecar/` com a sua chave:
 
 ```
 GEMINI_API_KEY=sua_chave_aqui
@@ -67,6 +170,8 @@ npm run tauri dev
 
 Isso sobe a interface (WebView), inicia o sidecar Node.js e abre a janela do aplicativo.
 
+> A **primeira** execução compila todo o Rust e pode levar vários minutos. As seguintes são rápidas.
+
 ## Build de produção
 
 ```bash
@@ -75,10 +180,22 @@ npm run tauri build
 
 O instalador/executável gerado fica em `src-tauri/target/release/bundle/`.
 
+## Problemas comuns
+
+| Sintoma | Causa provável | Solução |
+| --- | --- | --- |
+| `rustc: command not found` | Terminal aberto antes da instalação | Feche e reabra o terminal |
+| `link.exe not found` (Windows) | Build Tools sem a carga C++ | Reabra o instalador e marque "Desktop development with C++" |
+| `error: linker cc not found` (Linux) | Falta `build-essential` | Rode o `apt install` do passo 3 |
+| `GEMINI_API_KEY is not defined` | `.env` ausente ou fora de `sidecar/` | Confira o caminho do arquivo `.env` |
+| Build muito lenta na 1ª vez | Compilação inicial do Rust | Normal — aguarde |
+
+---
+
 ## Estrutura do projeto
 
 ```
-├── src/                 # Interface (React/Vue) — View
+├── src/                  # Interface (React/Vue) — View
 ├── src-tauri/            # Núcleo Tauri em Rust — Controller
 │   ├── src/
 │   └── tauri.conf.json
