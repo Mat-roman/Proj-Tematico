@@ -1,6 +1,0 @@
-{
-  "identifier": "default",
-  "description": "Permissoes da janela principal",
-  "windows": ["main"],
-  "permissions": ["core:default"]
-}
